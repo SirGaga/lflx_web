@@ -13,32 +13,34 @@
         text-color="#fff"
         active-text-color="#1890ff"
         :collapse="isCollapse"
-        collapse-transition="false"
+        :collapse-transition="this.collapseTransition"
+        :router="true"
     >
-      <el-submenu index="1">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>用户管理</span>
-        </template>
-        <el-menu-item index="1-1">
-          <i class="el-icon-location"></i>
-          <span>用户列表</span>
-        </el-menu-item>
-      </el-submenu>
-      <el-menu-item index="2">
-        <i class="el-icon-menu"></i>
-        <span slot="title">部门管理</span>
-      </el-menu-item>
+      <menu-sub :menu-list="menuList"/>
     </el-menu>
   </el-aside>
 </template>
 
 <script>
+import MenuSub from "./MenuSub";
 export default {
-name: "MenuTree",
+  name: "MenuTree",
+  components: {
+    MenuSub
+  },
   data() {
     return {
-      isCollapse:false
+      isCollapse: false,
+      collapseTransition: false
+    }
+  },
+  props:{
+    menuList: {
+      type: Array,
+      default() {
+        return [];
+      },
+      required: true
     }
   },
   methods: {
@@ -79,5 +81,15 @@ name: "MenuTree",
 .el-submenu__title:focus,.el-submenu__title:hover {
   outline: none;
   background-color: #e8f4ff !important;
+}
+
+/*实现了一个溢出处理*/
+.el-menu--collapse span,
+.el-menu--collapse i.el-submenu__icon-arrow {
+  height: 0;
+  width: 0;
+  overflow: hidden;
+  visibility: hidden;
+  display: inline-block;
 }
 </style>
