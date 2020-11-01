@@ -1,6 +1,6 @@
 <template>
   <div>
-      <el-menu-item :disabled="menu.disabled" :index="menu.url" :route="menu.url">
+      <el-menu-item @click="savePath(menu.url)" :disabled="menu.disabled" :index="menu.url" :route="menu.url">
         <i :class="menu.icon"></i>
         <span slot="title">{{ menu.menuName }}</span>
       </el-menu-item>
@@ -17,6 +17,12 @@ export default {
       default() {
         return {};
       }
+    }
+  },
+  methods: {
+    savePath(path){
+      window.sessionStorage.setItem('activePath',path);
+      this.activePath = path
     }
   }
 }

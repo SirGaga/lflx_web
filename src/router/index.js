@@ -5,6 +5,7 @@ Vue.use(VueRouter)
 
 const Login = () => import('../views/login/Login');
 const Main = () => import('../layout/Main')
+const User = () => import('../views/user/User')
 
 const routes = [
   {
@@ -17,7 +18,13 @@ const routes = [
   },
   {
     path: '/main',
-    component: Main
+    component: Main,
+    children: [
+      {
+        path: '/users',
+        component: User
+      }
+    ]
   }
 ]
 

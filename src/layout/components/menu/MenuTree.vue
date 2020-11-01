@@ -5,7 +5,7 @@
       <i :class="isCollapse?'el-icon-s-unfold':'el-icon-s-fold'"></i>
     </div>
     <el-menu
-        default-active="2"
+        :default-active="activePath"
         class="el-menu el-menu-vertical-demo"
         @open="handleOpen"
         @close="handleClose"
@@ -16,7 +16,7 @@
         :collapse-transition="this.collapseTransition"
         :router="true"
     >
-      <menu-sub :menu-list="menuList"/>
+      <menu-sub :menu-list="menuList" />
     </el-menu>
   </el-aside>
 </template>
@@ -31,7 +31,8 @@ export default {
   data() {
     return {
       isCollapse: false,
-      collapseTransition: false
+      collapseTransition: false,
+      activePath:''
     }
   },
   props:{

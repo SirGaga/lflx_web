@@ -14,7 +14,11 @@
     <el-container>
       <!--   侧边栏   -->
       <MenuTree :menuList="this.menuList"/>
-      <el-main>Main</el-main>
+      <!--   主页面显示侧边菜单点击显示的页面   -->
+      <el-main>
+        <!--    路由视图    -->
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -490,9 +494,9 @@ export default {
 
 .el-main {
   background-color: #E9EEF3;
-  color: #333;
-  text-align: center;
-  line-height: 160px;
+  /*color: #333;*/
+  /*text-align: center;*/
+  /*line-height: 160px;*/
 }
 
 </style>
