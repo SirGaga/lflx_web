@@ -50,29 +50,41 @@
           style="width: 100%;"
           max-height="890" >
         <el-table-column
-            prop="date"
-            label="日期"
-            width="180">
-        </el-table-column>
-        <el-table-column
-            prop="name"
+            prop="realName"
             label="姓名"
             width="180">
         </el-table-column>
         <el-table-column
-            prop="address"
-            label="地址">
+            prop="jh"
+            label="警号"
+            width="180">
+        </el-table-column>
+        <el-table-column
+            prop="gmsfhm"
+            label="公民身份号码"
+            width="200">
+        </el-table-column>
+
+        <el-table-column
+            prop="deptName"
+            label="部门名称"
+            width="500">
+        </el-table-column>
+
+        <el-table-column
+            prop="lastLoginIp"
+            label="最后登录地址">
         </el-table-column>
       </el-table>
       <el-pagination
           style="padding-top: 15px"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage4"
+          :current-page="currentPage"
           :page-sizes="[10, 15, 20, 50, 100,200,1000]"
-          :page-size="100"
+          :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="400">
+          :total="total">
       </el-pagination>
 
     </el-card>
@@ -109,50 +121,15 @@ export default {
         }],
       },
       tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      },{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      },{
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
+        realName: '管理员',
+        jh: '000000',
+        gmsfhm: '130130199009260014',
+        deptName: '北京航天理想科技股份有限公司',
+        lastLoginIp: ''
       }],
-      currentPage1: 5,
-      currentPage2: 5,
-      currentPage3: 5,
-      currentPage4: 4
+      currentPage: 1,
+      total: 1,
+      pageSize: 20
     }
   },
   methods: {
