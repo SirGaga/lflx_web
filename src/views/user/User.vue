@@ -38,7 +38,7 @@
         </el-form-item>
         <el-form-item>
           <el-button @click="onSubmit" icon="el-icon-refresh">重置</el-button>
-            <el-button type="primary" @click="onSubmit" icon="el-icon-search">查询</el-button>
+            <el-button type="primary" @click="getUserList" icon="el-icon-search">查询</el-button>
           <el-button type="success" @click="onSubmit" icon="el-icon-plus">添加</el-button>
           <el-button @click="onSubmit" icon="el-icon-download">导出</el-button>
         </el-form-item>
@@ -49,6 +49,11 @@
           border
           style="width: 100%;"
           max-height="890" >
+        <el-table-column
+            type="index"
+            label="#"
+            :index="indexMethod">
+        </el-table-column>
         <el-table-column
             prop="realName"
             label="姓名"
@@ -73,7 +78,35 @@
 
         <el-table-column
             prop="lastLoginIp"
-            label="最后登录地址">
+            label="最后登录地址"
+            width="120">
+        </el-table-column>
+        <el-table-column
+            prop="status"
+            label="是否禁用"
+            width="120">
+          <template slot-scope="scope" >
+            <el-switch
+                style="display: block"
+                v-model="scope.row.status"
+                active-color="#13ce66"
+                inactive-color="#eeeeee"
+                :active-value="1"
+                :inactive-value="0">
+            </el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column
+            label="操作">
+          <el-tooltip class="item" effect="dark" content="编辑" placement="top">
+            <el-button type="primary" size="small" icon="el-icon-edit"></el-button>
+          </el-tooltip>
+          <el-tooltip class="item" effect="dark" content="删除" placement="top">
+            <el-button type="danger" size="small" icon="el-icon-delete"></el-button>
+          </el-tooltip>
+          <el-tooltip class="item" effect="dark" content="权限" placement="top">
+            <el-button type="warning" size="small" icon="el-icon-s-tools"></el-button>
+          </el-tooltip>
         </el-table-column>
       </el-table>
       <el-pagination
@@ -92,6 +125,8 @@
 </template>
 
 <script>
+import {findUserList} from '../../api/user'
+
 export default {
   name: "User",
   data() {
@@ -120,19 +155,28 @@ export default {
           label: '广州'
         }],
       },
-      tableData: [{
-        realName: '管理员',
-        jh: '000000',
-        gmsfhm: '130130199009260014',
-        deptName: '北京航天理想科技股份有限公司',
-        lastLoginIp: ''
-      }],
+      tableData: [],
       currentPage: 1,
       total: 1,
       pageSize: 20
     }
   },
+  // Vue生命周期函数，在组件被创建的时候进行执行，
+  // 在这里可以执行一些数据初始化的操作
+  created() {
+    this.getUserList();
+  },
   methods: {
+    async getUserList(){
+      const {data} = await findUserList(this.currentPage,this.pageSize);
+
+      // 使用es6的数据解构语法是这样写，
+      // 代表的是定义一个常量，这个常量自动接收返回数据中的data属性的值
+      // const {data} = await findUserList();
+      this.total = data.data.total;
+      this.tableData = data.data.records;
+
+    },
     onSubmit() {
       console.log('submit!');
     },
@@ -140,10 +184,15 @@ export default {
       alert(value);
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.getUserList();
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.currentPage = val;
+      this.getUserList();
+    },
+    indexMethod(index) {
+      return (this.currentPage-1)*this.pageSize+(index + 1);
     }
   }
 }

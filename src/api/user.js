@@ -1,11 +1,10 @@
 import instance from "../utils/request";
 
-export const findUserList = () => {
-  return instance.get({
-    url: '/system/user',
+export const findUserList = (current,size) => {
+  return  instance.get('/system/user/',{
     params: {
-      current: 1,
-      size: 20
+      current: current,
+      size: size
     }
   })
 }
