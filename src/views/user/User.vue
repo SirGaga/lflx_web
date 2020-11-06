@@ -9,22 +9,26 @@
     <el-card class="box-card">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="部门">
-          <el-select v-model="formInline.dept.value" clearable  filterable placeholder="请选择">
-            <el-option
-                v-for="item in formInline.dept"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              <span style="float: left">{{ item.label }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
-            </el-option>
-          </el-select>
+          <el-cascader
+              v-model="formInline.deptCode"
+              :options="formInline.dept"
+              ref="cascader"
+              clearable
+              filterable
+              :show-all-levels="false"
+              :props="{ expandTrigger: 'hover',checkStrictly: true, emitPath: false, value: 'deptCode', label: 'deptName'}"
+              @change="handleChange">
+            <template slot-scope="{ node, data }">
+              <span>{{ data.deptName }}</span>
+              <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+            </template>
+          </el-cascader>
         </el-form-item>
         <el-form-item label="用户名">
-          <el-input v-model="formInline.username" placeholder="请输入用户名"></el-input>
+          <el-input v-model="formInline.username" clearable placeholder="请输入用户名"></el-input>
         </el-form-item>
         <el-form-item label="警号">
-          <el-input v-model="formInline.jh" placeholder="请输入警号"></el-input>
+          <el-input v-model="formInline.jh" clearable placeholder="请输入警号"></el-input>
         </el-form-item>
         <el-form-item label="性别">
           <el-radio-group
@@ -125,35 +129,21 @@
 </template>
 
 <script>
-import {findUserList} from '../../api/user'
+import {findUserList} from '../../api/user';
+import {findDeptTree} from "../../api/dept";
 
 export default {
   name: "User",
   data() {
     return {
       formInline: {
+        deptName: '',
         username: '',
+        deptCode: '',
+        deptMap: [],
         jh: '',
         sex: 1,
-        dept: [{
-          value: 'Beijing',
-          label: '北京'
-        }, {
-          value: 'Shanghai',
-          label: '上海'
-        }, {
-          value: 'Nanjing',
-          label: '南京'
-        }, {
-          value: 'Chengdu',
-          label: '成都'
-        }, {
-          value: 'Shenzhen',
-          label: '深圳'
-        }, {
-          value: 'Guangzhou',
-          label: '广州'
-        }],
+        dept: [],
       },
       tableData: [],
       currentPage: 1,
@@ -165,6 +155,7 @@ export default {
   // 在这里可以执行一些数据初始化的操作
   created() {
     this.getUserList();
+    this.getDeptList();
   },
   methods: {
     async getUserList(){
@@ -176,6 +167,34 @@ export default {
       this.total = data.data.total;
       this.tableData = data.data.records;
 
+    },
+    async getDeptList(){
+      const {data} = await findDeptTree();
+      this.formInline.deptMap = data.data.records;
+      let root = null;
+      if (this.formInline.deptMap && this.formInline.deptMap.length) {
+        root = { id: 0, parentId: null, children: [] };
+        const group = {};
+        for (let deptMapElement of this.formInline.deptMap) {
+          if (deptMapElement.deptParentId !== null && deptMapElement.deptParentId !== undefined) {
+            if (!group[deptMapElement.deptParentId]) {
+              group[deptMapElement.deptParentId] = [];
+            }
+            group[deptMapElement.deptParentId].push(deptMapElement);
+          }
+        }
+
+        const queue = [];
+        queue.push(root);
+        while (queue.length) {
+          const node = queue.shift();
+          node.children = group[node.id] && group[node.id].length ? group[node.id] : null;
+          if (node.children) {
+            queue.push(...node.children);
+          }
+        }
+      }
+      this.formInline.dept = root.children;
     },
     onSubmit() {
       console.log('submit!');
@@ -193,6 +212,12 @@ export default {
     },
     indexMethod(index) {
       return (this.currentPage-1)*this.pageSize+(index + 1);
+    },
+    // 这里获取到的value是最终选中的节点按照层级组成的数组
+    handleChange(value) {
+      console.log(this.formInline.deptCode,value);
+      // 这里待完善 根据value获取对应的deptName
+      console.log(this.formInline.deptMap.filter(e => e.deptCode===value));
     }
   }
 }
