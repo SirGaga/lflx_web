@@ -10,7 +10,7 @@
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="部门">
           <el-cascader
-              v-model="formInline.deptCode"
+              v-model="userVo.deptCode"
               :options="formInline.dept"
               ref="cascader"
               clearable
@@ -24,21 +24,24 @@
             </template>
           </el-cascader>
         </el-form-item>
-        <el-form-item label="用户名">
-          <el-input v-model="formInline.username" clearable placeholder="请输入用户名"></el-input>
+        <el-form-item label="姓名">
+          <el-input v-model="userVo.realName" clearable placeholder="请输入姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="公民身份号码">
+          <el-input v-model="userVo.gmsfhm" clearable placeholder="请输入公民身份号码"></el-input>
         </el-form-item>
         <el-form-item label="警号">
-          <el-input v-model="formInline.jh" clearable placeholder="请输入警号"></el-input>
+          <el-input v-model="userVo.jh" clearable placeholder="请输入警号"></el-input>
         </el-form-item>
-        <el-form-item label="性别">
-          <el-radio-group
-              v-model="formInline.sex"
-              @change="sexChange"
-          >
-            <el-radio :label="0">男</el-radio>
-            <el-radio :label="1">女</el-radio>
-            <el-radio :label="-1">全部</el-radio>
-          </el-radio-group>
+        <el-form-item label="用户状态">
+          <el-select v-model="userVo.status" clearable placeholder="请选择用户状态">
+            <el-option
+                v-for="item in formInline.statusOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button @click="onSubmit" icon="el-icon-refresh">重置</el-button>
@@ -136,13 +139,26 @@ export default {
   name: "User",
   data() {
     return {
-      formInline: {
+      userVo:{
         deptName: '',
-        username: '',
+        realName: '',
         deptCode: '',
-        deptMap: [],
+        status:'',
         jh: '',
-        sex: 1,
+        gmsfhm: ''
+      },
+      formInline: {
+        deptMap: [],
+        statusOptions: [{
+          value: '',
+          label: '全部'
+        }, {
+          value: '0',
+          label: '有效'
+        }, {
+          value: '1',
+          label: '禁用'
+        }],
         dept: [],
       },
       tableData: [],
@@ -159,7 +175,7 @@ export default {
   },
   methods: {
     async getUserList(){
-      const {data} = await findUserList(this.currentPage,this.pageSize);
+      const {data} = await findUserList(this.currentPage,this.pageSize,this.userVo);
 
       // 使用es6的数据解构语法是这样写，
       // 代表的是定义一个常量，这个常量自动接收返回数据中的data属性的值
@@ -199,9 +215,7 @@ export default {
     onSubmit() {
       console.log('submit!');
     },
-    sexChange(value){
-      alert(value);
-    },
+
     handleSizeChange(val) {
       this.pageSize = val;
       this.getUserList();
@@ -215,9 +229,13 @@ export default {
     },
     // 这里获取到的value是最终选中的节点按照层级组成的数组
     handleChange(value) {
-      console.log(this.formInline.deptCode,value);
+      console.log(this.userVo.deptCode,value);
       // 这里待完善 根据value获取对应的deptName
-      console.log(this.formInline.deptMap.filter(e => e.deptCode===value));
+      // 主要是清空存在问题
+      if (value !== null){
+        console.log((this.formInline.deptMap.filter(e => e.deptCode===value)[0]).deptName);
+      }
+
     }
   }
 }
