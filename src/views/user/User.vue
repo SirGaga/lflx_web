@@ -44,7 +44,7 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button @click="onSubmit" icon="el-icon-refresh">重置</el-button>
+          <el-button @click="resetUserVo" icon="el-icon-refresh">重置</el-button>
             <el-button type="primary" @click="getUserList" icon="el-icon-search">查询</el-button>
           <el-button type="success" @click="onSubmit" icon="el-icon-plus">添加</el-button>
           <el-button @click="onSubmit" icon="el-icon-download">导出</el-button>
@@ -235,7 +235,14 @@ export default {
       if (value !== null){
         console.log((this.formInline.deptMap.filter(e => e.deptCode===value)[0]).deptName);
       }
-
+    },
+    resetUserVo() {
+      this.userVo.deptCode = '';
+      this.userVo.deptName = '';
+      this.userVo.gmsfhm = '';
+      this.userVo.jh = '';
+      this.userVo.realName = '';
+      this.userVo.status = ''
     }
   }
 }
