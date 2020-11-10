@@ -8,22 +8,7 @@
     </el-breadcrumb>
     <el-card class="box-card">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item label="部门">
-          <el-cascader
-              v-model="userVo.deptCode"
-              :options="formInline.dept"
-              ref="cascader"
-              clearable
-              filterable
-              :show-all-levels="false"
-              :props="{ expandTrigger: 'hover',checkStrictly: true, emitPath: false, value: 'deptCode', label: 'deptName'}"
-              @change="handleChange">
-            <template slot-scope="{ node, data }">
-              <span>{{ data.deptName }}</span>
-              <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-            </template>
-          </el-cascader>
-        </el-form-item>
+        <dept-cascader @handleChange="this.handleChange" :dept-code="userVo.deptCode" :dept="formInline.dept" :dept-map="formInline.deptMap"></dept-cascader>
         <el-form-item label="姓名">
           <el-input v-model="userVo.realName" clearable placeholder="请输入姓名"></el-input>
         </el-form-item>
@@ -46,7 +31,7 @@
         <el-form-item>
           <el-button @click="resetUserVo" icon="el-icon-refresh">重置</el-button>
             <el-button type="primary" @click="getUserList" icon="el-icon-search">查询</el-button>
-          <el-button type="success" @click="onSubmit" icon="el-icon-plus">添加</el-button>
+          <el-button type="success" icon="el-icon-plus" @click="showDialog">添加</el-button>
           <el-button @click="onSubmit" icon="el-icon-download">导出</el-button>
         </el-form-item>
       </el-form>
@@ -126,19 +111,26 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="total">
       </el-pagination>
-
+      <user-add :dialog-visible="dialogVisible" @hideDialog="this.hideDialog" :dept-code="userVo.deptCode" :dept="formInline.dept" :dept-map="formInline.deptMap"></user-add>
     </el-card>
   </div>
 </template>
 
 <script>
 import {findUserList} from '../../api/user';
+import DeptCascader from "../../components/Cascader/DeptCascader";
 import {findDeptTree} from "../../api/dept";
+import UserAdd from "./UserAdd";
 
 export default {
   name: "User",
+  components: {
+    DeptCascader,
+    UserAdd
+  },
   data() {
     return {
+      dialogVisible: false,
       userVo:{
         deptName: '',
         realName: '',
@@ -227,15 +219,16 @@ export default {
     indexMethod(index) {
       return (this.currentPage-1)*this.pageSize+(index + 1);
     },
-    // 这里获取到的value是最终选中的节点按照层级组成的数组
     handleChange(value) {
-      console.log(this.userVo.deptCode,value);
+      this.userVo.deptCode = value;
+      // console.log(this.deptCode,value);
       // 这里待完善 根据value获取对应的deptName
       // 主要是清空存在问题
-      if (value !== null){
-        console.log((this.formInline.deptMap.filter(e => e.deptCode===value)[0]).deptName);
-      }
+      // if (value !== null){
+      //   console.log((this.deptMap.filter(e => e.deptCode===value)[0]).deptName);
+      // }
     },
+    // 这里获取到的value是最终选中的节点按照层级组成的数组
     resetUserVo() {
       this.userVo.deptCode = '';
       this.userVo.deptName = '';
@@ -243,6 +236,14 @@ export default {
       this.userVo.jh = '';
       this.userVo.realName = '';
       this.userVo.status = ''
+    },
+    showDialog() {
+      console.log('show');
+      this.dialogVisible = true;
+    },
+    hideDialog() {
+      console.log('hide');
+      this.dialogVisible = false;
     }
   }
 }
