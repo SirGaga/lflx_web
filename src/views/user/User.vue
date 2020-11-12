@@ -90,15 +90,17 @@
         </el-table-column>
         <el-table-column
             label="操作">
-          <el-tooltip class="item" effect="dark" content="编辑" placement="top">
-            <el-button type="primary" size="small" icon="el-icon-edit"></el-button>
-          </el-tooltip>
-          <el-tooltip class="item" effect="dark" content="删除" placement="top">
-            <el-button type="danger" size="small" icon="el-icon-delete"></el-button>
-          </el-tooltip>
-          <el-tooltip class="item" effect="dark" content="权限" placement="top">
-            <el-button type="warning" size="small" icon="el-icon-s-tools"></el-button>
-          </el-tooltip>
+          <template slot-scope="scope">
+            <el-tooltip class="item" effect="dark" content="编辑" placement="top">
+              <el-button type="primary" size="small" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)"></el-button>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="删除" placement="top">
+              <el-button type="danger" size="small" icon="el-icon-delete" @click="handleDelete(scope.$index, scope.row)"></el-button>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="权限" placement="top">
+              <el-button type="warning" size="small" icon="el-icon-s-tools" @click="handlePermission(scope.$index, scope.row)"></el-button>
+            </el-tooltip>
+          </template>
         </el-table-column>
       </el-table>
       <el-pagination
@@ -238,12 +240,22 @@ export default {
       this.userVo.status = ''
     },
     showDialog() {
-      console.log('show');
       this.dialogVisible = true;
     },
     hideDialog() {
-      console.log('hide');
       this.dialogVisible = false;
+    },
+    // 处理编辑 后台传入id，然后查询出来信息后返回弹框中
+    handleEdit(index, row) {
+      console.log(index, row);
+    },
+    // 处理删除，后台传入id，然后重新按照初始化的分页进行查询
+    handleDelete(index, row) {
+      console.log(index, row);
+    },
+    // 处理权限配置，后台传入id，然后级联获取权限信息，返回弹窗
+    handlePermission(index, row) {
+      console.log(index, row);
     }
   }
 }
